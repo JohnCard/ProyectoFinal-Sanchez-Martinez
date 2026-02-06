@@ -14,3 +14,7 @@ body{
     background-position-x: right;
     background-repeat: no-repeat;
 }
+
+.rounded-img{
+    border-radius: 50%;
+}

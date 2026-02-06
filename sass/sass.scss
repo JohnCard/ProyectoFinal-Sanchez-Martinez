@@ -1,4 +1,4 @@
-@for $i from 40 through 230{
+@for $i from 5 through 230{
     .max-w-#{$i*5}{
         max-width: #{$i*5}px;
     }

@@ -1,43 +1,23 @@
+import { saveGalleryData, deleteGalleryData, saveDefaultUser, deleteDefaultUser, cardItem, addItem, click, gallery, returnUser } from "./helpers.js";
+
+//* Save data buttons
+const galleryDataButton = document.getElementById('button-gallery')
+galleryDataButton.addEventListener('click', saveGalleryData)
+const userButton = document.getElementById('button-user')
+userButton.addEventListener('click', saveDefaultUser)
+//! Delete data buttons
+const deleteGalleryButton = document.getElementById('delete-gallery')
+deleteGalleryButton.addEventListener('click', deleteGalleryData)
+const deleteUser = document.getElementById('delete-user')
+deleteUser.addEventListener('click', deleteDefaultUser)
 //todo row div html element
 const row = document.querySelector('.row')
-
-//todo Card html element
-const card_item = (item) => {
-return `<div class="col-sm-6 col-lg-4 col-xxl-3 mb-3">
-    <div class="card" id="${item.pk}">
-        <img src=${item.fields.img} class="card-img-top p-3" alt="${item.fields.slug}-image" height="250">
-        <div class="card-body">
-            <h5 class="card-title">${item.fields.name}</h5>
-            <p class="card-text">Price - ${item.fields.price}</p>
-            <p class="card-text">Brand - ${item.fields.brand}</p>
-            <h5 class="card-subtitle">About item</h5>
-            <p class="card-text">${item.fields.description}</p>
-            <button class="btn btn-primary fw-bold">Add to cart</button>
-        </div>
-    </div>
-</div>`
-}
-
-//todo write main content for your row html container
-gallery = localStorage.getItem('gallery')
-gallery = JSON.parse(gallery)
-
-for(let item of gallery){
-    row.innerHTML += card_item(item)
-}
-
 //todo sava items for user´s cart
-document.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-        const card = e.target.closest('.card');
-        let pk = card.id
-        let user = localStorage.getItem('user')
-        user = JSON.parse(user)
-        for(let item of gallery){
-            if (pk == item.pk){
-                user.cart.push(item)
-            }
-        }
-        localStorage.setItem('user', JSON.stringify(user))
-    }
-});
+const user = returnUser()
+const userCart = [...user.cart]
+for(let item of gallery){
+    const findItem = userCart.find(itemCart => itemCart.fields.name == item.fields.name)
+    row.innerHTML += (findItem) ? cardItem(item, findItem.stock) : cardItem(item)
+}
+
+click(row, addItem, gallery)
