@@ -1,3 +1,5 @@
+import { randomInt } from "./helpers.js"
+
 class User{
     constructor(name, lastname, username, email, password, birthday, credit, role, adress, adress2, city, state, country){
         //? current user´s age (additinoal operation)
@@ -9,7 +11,7 @@ class User{
         this.createdAt = new Date().toISOString().slice(0,10)
         this.updatedAt = new Date().toISOString().slice(0,10)
         this.cart = []
-        this.collected_items = []
+        this.collectedItems = []
         this.name = name
         this.birthday = birthday
         this.age = userAge
@@ -29,7 +31,9 @@ class User{
 }
 
 class Item{
-    constructor(name, price, brand, img, description, categories){
+    constructor(pk, name, price, brand, img, description, categories){
+        this.pk = pk
+        this.stock = randomInt(1,10)
         this.name = name
         this.price = price
         this.brand = brand
@@ -39,6 +43,4 @@ class Item{
     }
 }
 
-const result = new Date(2024, 6, 15) - new Date(2024, 6, 14)
-
-export {User}
+export {User, Item}

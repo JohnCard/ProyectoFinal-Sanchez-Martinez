@@ -1,37 +1,35 @@
+import { Item } from "./models.js"
+
 //todo main gallery
 let gallery = localStorage.getItem('gallery')
 gallery = JSON.parse(gallery)
-//todo pull user object from localStorage and convert to object format
-let user = localStorage.getItem('user')
-user = JSON.parse(user)
 //todo pull item´s stock property from alert
 const stockForm = document.getElementById('stock-form')
 //* Additional functions
+//todo random integer
+const randomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 //todo Save default data
 const saveGalleryData = () => {
     fetch('product.json')
         .then(res => res.json())
         .then(data => {
-            const stringFormat = JSON.stringify(data)
-            localStorage.setItem('gallery', stringFormat)
+            const constData = [...data]
+            let gallery = []
+            constData.forEach(item => {
+                const product = new Item(item.pk, item.fields.name, item.fields.price, item.fields.brand, item.fields.img, item.fields.description, item.fields.categories)
+                gallery.push(product)
+            })
+            console.log(gallery)
+            gallery = JSON.stringify(gallery)
+            console.log(gallery)
+            // localStorage.setItem('gallery', gallery)
         });
 }
 //todo Delete default data
 const deleteGalleryData = () => {
     localStorage.removeItem('gallery')
-}
-//todo Save default user
-const saveDefaultUser = () => {
-    fetch('user.json')
-        .then(res => res.json())
-        .then(data => {
-            const stringFormat = JSON.stringify(data)
-            localStorage.setItem('user', stringFormat)
-        });
-}
-//todo Delete default user
-const deleteDefaultUser = () => {
-    localStorage.removeItem('user')
 }
 //todo udd user
 const addUser = (user) => {
@@ -57,31 +55,6 @@ const returnUser = () => {
 const updateUser = (user) => {
     const newUser = JSON.stringify(user)
     localStorage.setItem('user', newUser)
-}
-//todo return user´s values
-const userData = (user) => {
-    const constUser = {...user}
-    //todo username
-    let username = user.username
-    //todo name
-    let name = user.name
-    //todo email
-    let email = user.email
-    //todo user cart & collection
-    let userCart = {...constUser.cart}
-    let collectedItems = {...constUser.collected_items}
-    //todo total payment
-    let total = 0
-    userCart.forEach(item => total += parseFloat(item.fields.price))
-    //todo total items
-    let totalItems = 0
-    userCart.forEach(item => totalItems += item.stock)
-    //todo total bought items
-    let collectionTotal = 0
-    collectedItems.forEach(item => collectionTotal += item.stock)
-    //todo user img
-    let img = user.img
-    return {username, name, email, credit, userCart, collectedItems, total, totalItems, collectionTotal, img}
 }
 //* Add item to user´s cart
 const addItem = (item, targetElement) => {
@@ -188,6 +161,7 @@ const cardItem = (item, stockCart=0) => {
                         <h5 class="card-title">${item.fields.name}</h5>
                         <p class="card-text">Price - $${Number(item.fields.price).toLocaleString('en-US')}</p>
                         <p class="card-text">Stock cart - ${stockCart}</p>
+                        <p class="card-text">Stock gallery - </p>
                         <p class="card-text min-h-50">Categories - ${(item.fields.categories).join(', ')}</p>
                         <p class="card-text min-h-50">Brand - ${item.fields.brand}</p>
                         <h5 class="card-subtitle">About item</h5>
@@ -257,4 +231,4 @@ const accordionContent = (listItems, accordionRef, htmlItem) => {
     }
 }
 
-export {saveGalleryData, deleteGalleryData, saveDefaultUser, deleteDefaultUser, cardItem, addItem, click, accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, userData, addUser, returnUserList, gallery, user, stockForm}
+export {saveGalleryData, deleteGalleryData, cardItem, addItem, click, accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, addUser, returnUserList, randomInt, gallery, stockForm}
