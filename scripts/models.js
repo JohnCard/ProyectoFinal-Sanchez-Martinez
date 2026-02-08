@@ -33,13 +33,13 @@ class User{
 class Item{
     constructor(pk, name, price, brand, img, description, categories){
         this.pk = pk
-        this.stock = randomInt(1,10)
         this.name = name
         this.price = price
         this.brand = brand
         this.img = img
         this.description = description
         this.categories = categories
+        this.stock = randomInt(1,10)
     }
 }
 

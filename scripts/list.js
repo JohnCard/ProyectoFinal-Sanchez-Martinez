@@ -25,7 +25,7 @@ const row = document.querySelector('.row')
 const user = returnUser()
 const userCart = [...user.cart]
 for(let item of gallery){
-    const findItem = userCart.find(itemCart => itemCart.fields.name == item.fields.name)
+    const findItem = userCart.find(itemCart => itemCart.name == item.name)
     row.innerHTML += (findItem) ? cardItem(item, findItem.stock) : cardItem(item)
 }
 

@@ -1,4 +1,4 @@
-import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, gallery} from "./helpers.js"
+import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery} from "./helpers.js"
 
 //todo user existence confirmation
 document.addEventListener('DOMContentLoaded', (e) => {
@@ -32,7 +32,7 @@ let cart =  [...user.cart]
 let collectedItems = [...user.collectedItems]
 //todo total payment
 let total = 0
-cart.forEach(item => total += parseFloat(item.fields.price))
+cart.forEach(item => total += parseFloat(item.price))
 //todo total items
 let totalItems = 0
 cart.forEach(item => totalItems += item.stock)
@@ -96,19 +96,35 @@ accordionContent(cart, accordion, accordionItem)
 accordionContent(collectedItems, accordionTwo, accordionSubItem)
 //** Delete cart item function
 const deleteItem = (item) => {
+    user = returnUser()
+    cart = [...user.cart]
     //todo Delete item from user´s cart
     const pk = item.pk
     const stock = item.stock
-    user = returnUser()
-    cart = [...user.cart]
+    const coincidence = gallery.some(galleryItem => galleryItem.name == item.name)
+    if(coincidence){
+        gallery.forEach(galleryItem => {
+            if(galleryItem.name == item.name){
+                galleryItem.stock += 1
+            }
+        })
+    }
+    else{
+        let initPrice = item.price
+        initPrice = (initPrice/stock)
+        item.price = initPrice
+        item.stock = 1
+        gallery.push(item)
+    }
+    updateCurrentData(gallery)
     if(stock == 1){
         cart = cart.filter(item => item.pk !== pk)
     }else{
         cart.forEach(item => {
             if(item.pk == pk){
-                let initPrice = item.fields.price
+                let initPrice = item.price
                 initPrice = (initPrice/stock)
-                item.fields.price -= initPrice
+                item.price -= initPrice
                 item.stock -= 1
             }
         })
@@ -117,7 +133,7 @@ const deleteItem = (item) => {
     accordionContent(cart, accordion, accordionItem)
     //todo
     total = 0
-    cart.forEach(item => total += parseFloat(item.fields.price))
+    cart.forEach(item => total += parseFloat(item.price))
     paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
     //todo
     totalItems = 0
@@ -147,18 +163,18 @@ confirmButton.addEventListener('click', () => {
     }
     else{
         cart.forEach(cartItem => {
-            const someItem = collectedItems.some(item => item.fields.name == cartItem.fields.name)
+            const someItem = collectedItems.some(item => item.name == cartItem.name)
             if(someItem){
                 collectedItems.forEach(userItem => {
-                    if(userItem.fields.name == cartItem.fields.name){
+                    if(userItem.name == cartItem.name){
                         userItem.stock += cartItem.stock
-                        user.credit -= cartItem.fields.price
+                        user.credit -= cartItem.price
                     }
                 })
             }
             else{
-                user.credit -= cartItem.fields.price
-                delete cartItem.fields.price
+                user.credit -= cartItem.price
+                delete cartItem.price
                 collectedItems.push(cartItem)
             }
         })
@@ -185,9 +201,17 @@ confirmButton.addEventListener('click', () => {
 //todo empty card button handling
 emptyCartButton.addEventListener('click', () => {
     user = returnUser()
-    accordion.innerHTML = '<h2 class="text-warning">Not selected items yet.</h2>'
     paymentCost.textContent = `Payment cost - $0`
     selectedItems.textContent = `Total selected items - 0`
+    accordion.innerHTML = '<h2 class="text-warning">Not selected items yet.</h2>'
+    gallery.forEach(item => {
+        user.cart.forEach(itemCart => {
+            if(itemCart.name == item.name){
+                item.stock += itemCart.stock
+            }
+        })
+    })
+    updateCurrentData(gallery)
     user.cart = []
     updateUser(user)
     Swal.fire({
@@ -205,18 +229,18 @@ accordion.addEventListener('click', (e) => {
         user = returnUser()
         cart = [...user.cart]
         collectedItems = [...user.collectedItems]
-        if(cartItem.fields.price <= user.credit){
+        if(cartItem.price <= user.credit){
             user.cart = cart.filter(item => item.pk != pk)
-            user.credit -= cartItem.fields.price
-            const coincidence = user.collectedItems.some(item => item.fields.name == cartItem.fields.name)
+            user.credit -= cartItem.price
+            const coincidence = user.collectedItems.some(item => item.name == cartItem.name)
             if(coincidence){
                 for(let item of user.collectedItems){
-                    if(item.fields.name == cartItem.fields.name){
+                    if(item.name == cartItem.name){
                         item.stock += cartItem.stock
                     }
                 }
             }else{
-                delete cartItem.fields.price
+                delete cartItem.price
                 user.collectedItems.push(cartItem)
             }
             updateUser(user)
@@ -250,29 +274,29 @@ accordion.addEventListener('click', (e) => {
             e.preventDefault()
             stockValue = stockForm.stock.value
             stockValue = (stockValue) ? parseInt(stockValue) : 0
-            if(user.credit >= cartItem.fields.price){
+            if(user.credit >= cartItem.price){
                 cart.forEach(item => {
                     if(item.pk == pk){
                         item.stock -= stockValue
                         if(item.stock <= 0){
                             cart = cart.filter(item => item.pk != pk)
-                            let itemPrice = gallery.find(galleryItem => galleryItem.fields.name == item.fields.name)
-                            itemPrice = itemPrice.fields.price
+                            let itemPrice = gallery.find(galleryItem => galleryItem.name == item.name)
+                            itemPrice = itemPrice.price
                             itemPrice = parseInt(itemPrice)
                             user.credit -= stockValue*itemPrice
                         }else{
-                            let itemPrice = gallery.find(galleryItem => galleryItem.fields.name == item.fields.name)
-                            itemPrice = itemPrice.fields.price
+                            let itemPrice = gallery.find(galleryItem => galleryItem.name == item.name)
+                            itemPrice = itemPrice.price
                             itemPrice = parseInt(itemPrice)
-                            item.fields.price = itemPrice*item.stock
+                            item.price = itemPrice*item.stock
                             user.credit -= stockValue*itemPrice
                         }
                     }
                 })
-                const coincidence = collectedItems.some(item => item.fields.name == cartItem.fields.name)
+                const coincidence = collectedItems.some(item => item.name == cartItem.name)
                 if(coincidence){
                     collectedItems.forEach(item => {
-                        if(item.fields.name == cartItem.fields.name){
+                        if(item.name == cartItem.name){
                             item.stock += stockValue
                         }
                     })
@@ -304,16 +328,14 @@ accordion.addEventListener('click', (e) => {
         })
     }
     else if(targetValue == 'Remove item'){
-        user = returnUser()
-        cart = [...user.cart]
         const pk = e.target.id
         const item = cart.find(item => item.pk == pk)
         deleteItem(item)
     }
     else if(targetValue == 'Remove item(s)'){
-        const pk = e.target.classList[2]
         user = returnUser()
         cart = [...user.cart]
+        const pk = e.target.classList[2]
         stockForm.addEventListener('submit', (e) => {
             e.preventDefault()
             let stockValue = stockForm.stock.value
@@ -321,16 +343,34 @@ accordion.addEventListener('click', (e) => {
             cart.forEach(item => {
                 if(item.pk == pk){
                     item.stock -= stockValue
+                    const coincidence = gallery.some(galleryItem => galleryItem.name == item.name)
+                    if(coincidence){
+                        gallery.forEach(galleryItem => {
+                            if(galleryItem.name == item.name){
+                                galleryItem.stock += stockValue
+                            }
+                        })
+                    }else{
+                        const newItem = {...item}
+                        let initPrice = item.price
+                        const stock = item.stock
+                        initPrice = (initPrice/stock)
+                        item.price -= initPrice*stockValue
+                        newItem.price = initPrice
+                        newItem.stock = stockValue
+                        gallery.push(newItem)
+                    }
                     if(item.stock <= 0){
                         cart = cart.filter(item => item.pk != pk)
                     }else{
-                        let itemPrice = gallery.find(galleryItem => galleryItem.fields.name == item.fields.name)
-                        itemPrice = itemPrice.fields.price
+                        let itemPrice = gallery.find(galleryItem => galleryItem.name == item.name)
+                        itemPrice = itemPrice.price
                         itemPrice = parseInt(itemPrice)
-                        item.fields.price = itemPrice*item.stock
+                        item.price = itemPrice*item.stock
                     }
                 }
             })
+            updateCurrentData(gallery)
             accordionContent(cart, accordion, accordionItem)
             user.cart = cart
             updateUser(user)
