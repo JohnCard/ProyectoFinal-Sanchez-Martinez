@@ -1,4 +1,4 @@
-import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery} from "./helpers.js"
+import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery, cardItem} from "./helpers.js"
 
 //todo user existence confirmation
 document.addEventListener('DOMContentLoaded', (e) => {
@@ -204,26 +204,35 @@ emptyCartButton.addEventListener('click', () => {
     paymentCost.textContent = `Payment cost - $0`
     selectedItems.textContent = `Total selected items - 0`
     accordion.innerHTML = '<h2 class="text-warning">Not selected items yet.</h2>'
-    gallery.forEach(item => {
-        user.cart.forEach(itemCart => {
-            if(itemCart.name == item.name){
-                item.stock += itemCart.stock
-            }
-        })
+    user.cart.forEach(cartItem => {
+        const coincidence = gallery.some(galleryItem => galleryItem.name == cartItem.name)
+        if(coincidence){
+            gallery.forEach(item => {
+                if(cartItem.name == item.name){
+                    item.stock += cartItem.stock
+                }
+            })
+        }else{
+            let initPrice = cartItem.price
+            const stock = cartItem.stock
+            initPrice = (initPrice/stock)
+            cartItem.price = initPrice
+            gallery.push(cartItem)
+        }
     })
     updateCurrentData(gallery)
     user.cart = []
     updateUser(user)
     Swal.fire({
-            title: 'Empty cart',
-            icon: 'info',
-            confirmButtonText: 'Ok',
-        })
+        title: 'Empty cart',
+        icon: 'info',
+        confirmButtonText: 'Ok',
+    })
 })
 //todo catch accordion click event
 accordion.addEventListener('click', (e) => {
     const targetValue = e.target.textContent
-    if(targetValue == 'Buy item'){
+    if(targetValue == 'Buy item(s)'){
         const pk = e.target.classList[2]
         const cartItem = user.cart.find(item => item.pk == pk)
         user = returnUser()
@@ -262,8 +271,7 @@ accordion.addEventListener('click', (e) => {
             confirmButtonText: 'Ok',
         })
         }
-    }
-    else if(targetValue == 'Choose amount'){
+    }else if(targetValue == 'Choose amount'){
         const pk = e.target.classList[2]
         user = returnUser()
         cart = [...user.cart]
@@ -326,13 +334,57 @@ accordion.addEventListener('click', (e) => {
                 })
             }
         })
+    }else if(targetValue == 'Buy item'){
+        user = returnUser()
+        cart = [...user.cart]
+        collectedItems = [...user.collectedItems]
+        const pk = e.target.classList[2]
+        const findItem = cart.find(item => item.pk == pk)
+        let initPrice = findItem.price
+        const stock = findItem.stock
+        initPrice = parseInt(initPrice/stock)
+        user.credit -= initPrice
+        if(user.credit >= initPrice){
+            const coincidence = collectedItems.some(item => item.name == findItem.name)
+            if(coincidence){
+                collectedItems.forEach(item => {
+                    if(item.name == findItem.name){
+                        item.stock += 1
+                    }
+                })
+            }else{
+                delete findItem.price
+                findItem.stock = 1
+                collectedItems.push(findItem)
+            }
+            cart.forEach(item => {
+                if(item.name == findItem.name){
+                    item.stock -= 1
+                    item.price -= initPrice
+                    if(item.stock == 0){
+                        cart = cart.filter(cartItem => cartItem.pk != item.pk)
+                    }
+                }
+            })
+            accordionContent(cart, accordion, accordionItem)
+            accordionContent(collectedItems, accordionTwo, accordionSubItem)
+            user.cart = cart
+            user.collectedItems = collectedItems
+            updateUser(user)
+        }else{
+            Swal.fire({
+            title: '¡Not enough credit!',
+            text: 'You don´t have enough credit to perform this action!',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+        })
+        }
     }
     else if(targetValue == 'Remove item'){
         const pk = e.target.id
         const item = cart.find(item => item.pk == pk)
         deleteItem(item)
-    }
-    else if(targetValue == 'Remove item(s)'){
+    }else if(targetValue == 'Remove item(s)'){
         user = returnUser()
         cart = [...user.cart]
         const pk = e.target.classList[2]
@@ -376,5 +428,29 @@ accordion.addEventListener('click', (e) => {
             updateUser(user)
             stockForm.reset()
         })
+    }else if(targetValue == 'Delete item(s)'){
+        user = returnUser()
+        cart = [...user.cart]
+        const pk = e.target.classList[2]
+        const findItem = cart.find(item => item.pk == pk)
+        const coincidence = gallery.some(item => item.name == findItem.name)
+        if(coincidence){
+            gallery.forEach(item => {
+                if(item.name == findItem.name){
+                    item.stock += findItem.stock
+                }
+            })
+            cart = cart.filter(item => item.pk != findItem.pk)
+        }else{
+            let initPrice = findItem.price
+            const stock = findItem.stock
+            initPrice = (initPrice/stock)
+            findItem.price = initPrice
+            gallery.push(findItem)
+        }
+        accordionContent(cart, accordion, accordionItem)
+        updateCurrentData(gallery)
+        user.cart = cart
+        updateUser(user)
     }
 })
