@@ -1,4 +1,4 @@
-import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery, cardItem} from "./helpers.js"
+import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery} from "./helpers.js"
 
 //todo user existence confirmation
 document.addEventListener('DOMContentLoaded', (e) => {
