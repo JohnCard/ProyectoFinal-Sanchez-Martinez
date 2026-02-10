@@ -230,6 +230,8 @@ const click = (element, arrowF, arraySearch) => {
 //* HMTL components
 //todo card html
 const cardItem = (item, stockCart=0) => {
+    //! <p class="card-text min-h-50">Categories - ${item.categories.join(', ')}</p>
+    //! <p class="card-text">${item.description.slice(0, 120)}...</p>
     return `<div class="col-sm-6 col-lg-4 col-xxl-3 mb-3">
                 <div class="card">
                     <img src=${item.img} class="card-img-top py-3 px-5" alt="${item.slug}-image" height="180">
@@ -238,10 +240,7 @@ const cardItem = (item, stockCart=0) => {
                         <p class="card-text">Price - $${Number(item.price).toLocaleString('en-US')}</p>
                         <p class="card-text">Stock cart - ${stockCart}</p>
                         <p class="card-text">Stock gallery - ${item.stock}</p>
-                        <p class="card-text min-h-50">Categories - ${(item.categories).join(', ')}</p>
                         <p class="card-text min-h-50">Brand - ${item.brand}</p>
-                        <h5 class="card-subtitle">About item</h5>
-                        <p class="card-text">${item.description.slice(0, 120)}...</p>
                         <button class="btn btn-primary me-3" id="${item.pk}" data-bs-target="#exampleModal" data-bs-toggle="modal">Add to cart</button>
                         <button class="btn btn-primary ${item.pk}">Add one item</button>
                     </div>
@@ -249,6 +248,7 @@ const cardItem = (item, stockCart=0) => {
         </div>`
 }
 //todo accordion item html
+//! <p class="text-bg-light p-3 w-75">Categories - ${(item.categories).join(', ')}</p>
 const accordionItem = (item, state='') => {
     return `<div class="accordion-item">
         <h2 class="accordion-header">

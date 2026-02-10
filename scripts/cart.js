@@ -182,6 +182,7 @@ confirmButton.addEventListener('click', () => {
         paymentCost.textContent = `Payment cost - $0`
         selectedItems.textContent = `Total selected items - 0`
         accordion.innerHTML = '<h2 class="text-warning">Not selected items yet.</h2>'
+        cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
         //todo total bought items
         collectionTotal = 0
         collectedItems.forEach(item => collectionTotal += item.stock)
@@ -239,8 +240,8 @@ accordion.addEventListener('click', (e) => {
         cart = [...user.cart]
         collectedItems = [...user.collectedItems]
         if(cartItem.price <= user.credit){
-            user.cart = cart.filter(item => item.pk != pk)
             user.credit -= cartItem.price
+            user.cart = cart.filter(item => item.pk != pk)
             const coincidence = user.collectedItems.some(item => item.name == cartItem.name)
             if(coincidence){
                 for(let item of user.collectedItems){
@@ -257,6 +258,13 @@ accordion.addEventListener('click', (e) => {
             cart = user.cart
             accordionContent(collectedItems, accordionTwo, accordionSubItem)
             accordionContent(cart, accordion, accordionItem)
+            total = 0
+            cart.forEach(item => total += parseFloat(item.price))
+            paymentCost.textContent = `Payment cost - $${total}`
+            totalItems = 0
+            cart.forEach(item => totalItems += item.stock)
+            selectedItems.textContent = `Total selected items - ${totalItems}`
+            cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
             Swal.fire({
                 title: '!Performed action!',
                 text: 'Your movement was performed correctly!',
@@ -276,13 +284,17 @@ accordion.addEventListener('click', (e) => {
         user = returnUser()
         cart = [...user.cart]
         collectedItems = [...user.collectedItems]
-        const cartItem = cart.find(item => item.pk == pk)
+        const cartItem = {...cart.find(item => item.pk == pk)}
         let stockValue
         stockForm.addEventListener('submit', (e) => {
             e.preventDefault()
             stockValue = stockForm.stock.value
             stockValue = (stockValue) ? parseInt(stockValue) : 0
-            if(user.credit >= cartItem.price){
+            let stockPrice = gallery.find(galleryItem => galleryItem.name == cartItem.name)
+            stockPrice = stockPrice.price
+            stockPrice = parseInt(stockPrice)
+            stockPrice = stockPrice*stockValue
+            if(user.credit >= stockPrice){
                 cart.forEach(item => {
                     if(item.pk == pk){
                         item.stock -= stockValue
@@ -313,6 +325,13 @@ accordion.addEventListener('click', (e) => {
                     collectionItem.stock = stockValue
                     collectedItems.push(collectionItem)
                 }
+                total = 0
+                cart.forEach(item => total += parseFloat(item.price))
+                paymentCost.textContent = `Payment cost - $${total}`
+                totalItems = 0
+                cart.forEach(item => totalItems += item.stock)
+                selectedItems.textContent = `Total selected items - ${totalItems}`
+                cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
                 accordionContent(collectedItems, accordionTwo, accordionSubItem)
                 accordionContent(cart, accordion, accordionItem)
                 user.cart = cart
@@ -339,12 +358,12 @@ accordion.addEventListener('click', (e) => {
         cart = [...user.cart]
         collectedItems = [...user.collectedItems]
         const pk = e.target.classList[2]
-        const findItem = cart.find(item => item.pk == pk)
+        const findItem = {...cart.find(item => item.pk == pk)}
         let initPrice = findItem.price
         const stock = findItem.stock
         initPrice = parseInt(initPrice/stock)
-        user.credit -= initPrice
         if(user.credit >= initPrice){
+            user.credit -= initPrice
             const coincidence = collectedItems.some(item => item.name == findItem.name)
             if(coincidence){
                 collectedItems.forEach(item => {
@@ -352,10 +371,12 @@ accordion.addEventListener('click', (e) => {
                         item.stock += 1
                     }
                 })
+                user.collectedItems = collectedItems
             }else{
                 delete findItem.price
                 findItem.stock = 1
-                collectedItems.push(findItem)
+                user.collectedItems.push(findItem)
+                console.log(user.collectedItems)
             }
             cart.forEach(item => {
                 if(item.name == findItem.name){
@@ -366,11 +387,20 @@ accordion.addEventListener('click', (e) => {
                     }
                 }
             })
-            accordionContent(cart, accordion, accordionItem)
-            accordionContent(collectedItems, accordionTwo, accordionSubItem)
+            //todo
+            total = 0
+            cart.forEach(item => total += parseFloat(item.price))
+            paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
+            //todo
+            totalItems = 0
+            cart.forEach(item => totalItems += item.stock)
+            selectedItems.textContent = `Total selected items - ${totalItems}`
+            //todo Type user balance
+            cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
             user.cart = cart
-            user.collectedItems = collectedItems
             updateUser(user)
+            accordionContent(user.cart, accordion, accordionItem)
+            accordionContent(user.collectedItems, accordionTwo, accordionSubItem)
         }else{
             Swal.fire({
             title: '¡Not enough credit!',
@@ -426,6 +456,18 @@ accordion.addEventListener('click', (e) => {
             accordionContent(cart, accordion, accordionItem)
             user.cart = cart
             updateUser(user)
+            //todo
+            total = 0
+            cart.forEach(item => total += parseFloat(item.price))
+            paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
+            //todo
+            totalItems = 0
+            cart.forEach(item => totalItems += item.stock)
+            selectedItems.textContent = `Total selected items - ${totalItems}`
+            //todo
+            if(user.credit > total){
+                enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
+            }
             stockForm.reset()
         })
     }else if(targetValue == 'Delete item(s)'){
@@ -447,10 +489,23 @@ accordion.addEventListener('click', (e) => {
             initPrice = (initPrice/stock)
             findItem.price = initPrice
             gallery.push(findItem)
+            cart = cart.filter(item => item.pk != findItem.pk)
         }
         accordionContent(cart, accordion, accordionItem)
         updateCurrentData(gallery)
         user.cart = cart
         updateUser(user)
+        //todo
+        total = 0
+        cart.forEach(item => total += parseFloat(item.price))
+        paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
+        //todo
+        totalItems = 0
+        cart.forEach(item => totalItems += item.stock)
+        selectedItems.textContent = `Total selected items - ${totalItems}`
+        //todo
+        if(user.credit > total){
+            enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
+        }
     }
 })

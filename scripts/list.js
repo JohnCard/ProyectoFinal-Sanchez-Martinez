@@ -1,4 +1,4 @@
-import { saveGalleryData, deleteGalleryData, cardItem, addItem, click, gallery, returnUser } from "./helpers.js";
+import { saveGalleryData, deleteGalleryData, cardItem, addItem, click, gallery, returnUser } from "./helpers.js"
 
 //todo user existence confirmation
 document.addEventListener('DOMContentLoaded', (e) => {
