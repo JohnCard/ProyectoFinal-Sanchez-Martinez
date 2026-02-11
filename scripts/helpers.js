@@ -263,7 +263,7 @@ const accordionItem = (item, state='') => {
                 <p class="text-bg-light p-3 w-50">Price - $${Number(item.price).toLocaleString('en-US')}</p>
                 <p class="text-bg-light p-3 w-25">Stock - ${item.stock}</p>
                 <button class="btn btn-danger ${item.pk}">Delete item(s)</button>
-                <button class="btn btn-danger" id=${item.pk}>Remove item</button>
+                <button class="btn btn-danger ${item.pk}">Remove item</button>
                 <button class="btn btn-warning ${item.pk}" data-bs-target="#exampleModal" data-bs-toggle="modal">Remove item(s)</button>
                 <button class="btn btn-success ${item.pk}">Buy item(s)</button>
                 <button class="btn btn-success ${item.pk}">Buy item</button>
