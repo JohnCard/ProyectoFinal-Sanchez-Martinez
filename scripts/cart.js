@@ -33,7 +33,6 @@ const emptyCartButton = document.getElementById('empty-cart')
 //todo card text (extract every <p class="card-text"></p> tags) html elements
 const cardTextList = document.querySelectorAll('.card-text')
 
-
 //* variables to be used
 //todo current user and gallery
 let user = returnUser()
@@ -48,7 +47,6 @@ cart.forEach(item => totalItems += item.stock)
 //todo total bought items (counter)
 let collectionTotal = 0
 collectedItems.forEach(item => collectionTotal += item.stock)
-
 
 //todo user name html container
 const userName = cardTextList[5]
@@ -91,6 +89,30 @@ if(user.credit > total){
 let date = new Date()
 date = date.toISOString().split('T')[0]
 dateContainer.textContent = date
+//* reset main content
+const resetContent = () => {
+    //todo update localStorage´s user and gallery values
+    updateUser(user)
+    updateCurrentData(gallery)
+    //todo rewrite accordion items/content
+    accordionContent(user.cart, accordion, accordionItem)
+    accordionContent(user.collectedItems, accordionTwo, accordionSubItem)
+    cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
+    //todo reset the value of the `total` variable to 0 and iterate through the shopping cart once again, adding up item´s price
+    total = 0
+    user.cart.forEach(item => total += parseFloat(item.price))
+    //todo update the payment cost display with the current total, formatting the number with commas for thousands (en-US style)
+    paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
+    //todo reset totalItems variable to 0 and iterate through the shopping cart once again, adding up item´s stock
+    totalItems = 0
+    user.cart.forEach(item => totalItems += item.stock)
+    selectedItems.textContent = `Total selected items - ${totalItems}`
+    //todo consider the possibility that before the current item was removed, the user's credit might not have been enough to cover all the items. Since an item was just removed, re-evaluate whether the user's credit is now greater than the total cost of all items.
+    if(user.credit > total){
+        //todo update the display to indicate that the user now has enough credit
+        enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
+    }
+}
 //todo write main data for accordion(s) html container based on user´s cart and collection items
 accordionContent(cart, accordion, accordionItem)
 accordionContent(collectedItems, accordionTwo, accordionSubItem)
@@ -227,6 +249,7 @@ accordion.addEventListener('click', (e) => {
                 delete cartItem.price
                 user.collectedItems.push(cartItem)
             }
+            resetContent()
             Swal.fire({
                 title: '!Performed action!',
                 text: 'Your movement was performed correctly!',
@@ -263,6 +286,7 @@ accordion.addEventListener('click', (e) => {
                     newItem.stock = stockValue
                     user.collectedItems.push(newItem)
                 }
+                resetContent()
                 stockForm.reset()
                 Swal.fire({
                     title: '!Performed action!',
@@ -295,6 +319,7 @@ accordion.addEventListener('click', (e) => {
             if(cartItem.stock == 0){
                 user.cart = user.cart.filter(item => item.pk != pk)
             }
+            resetContent()
         }else{
             Swal.fire({
                 title: '¡Not enough credit!',
@@ -327,6 +352,7 @@ accordion.addEventListener('click', (e) => {
             cartItem.price -= itemPrice
             cartItem.stock -= 1
         }
+        resetContent()
     }else if(targetValue == 'Remove item(s)'){
         stockForm.addEventListener('submit', (e) => {
             e.preventDefault()
@@ -347,6 +373,7 @@ accordion.addEventListener('click', (e) => {
             }else{
                 cartItem.price -= itemPrice*stockValue
             }
+            resetContent()
             stockForm.reset()
         })
     }else if(targetValue == 'Delete item(s)'){
@@ -356,27 +383,7 @@ accordion.addEventListener('click', (e) => {
             cartItem.price = itemPrice
             gallery.push(cartItem)
         }
-        user.cart = user.cart.filter(item => item.pk != cartItem.pk)
-    }
-    //todo update localStorage´s user and gallery values
-    updateUser(user)
-    updateCurrentData(gallery)
-    //todo rewrite accordion items/content
-    accordionContent(user.cart, accordion, accordionItem)
-    accordionContent(user.collectedItems, accordionTwo, accordionSubItem)
-    cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
-    //todo reset the value of the `total` variable to 0 and iterate through the shopping cart once again, adding up item´s price
-    total = 0
-    user.cart.forEach(item => total += parseFloat(item.price))
-    //todo update the payment cost display with the current total, formatting the number with commas for thousands (en-US style)
-    paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
-    //todo reset totalItems variable to 0 and iterate through the shopping cart once again, adding up item´s stock
-    totalItems = 0
-    user.cart.forEach(item => totalItems += item.stock)
-    selectedItems.textContent = `Total selected items - ${totalItems}`
-    //todo consider the possibility that before the current item was removed, the user's credit might not have been enough to cover all the items. Since an item was just removed, re-evaluate whether the user's credit is now greater than the total cost of all items.
-    if(user.credit > total){
-        //todo update the display to indicate that the user now has enough credit
-        enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
+        user.cart = user.cart.filter(item => item.pk != pk)
+        resetContent()
     }
 })
