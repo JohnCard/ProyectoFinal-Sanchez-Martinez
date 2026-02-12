@@ -38,11 +38,12 @@ row.addEventListener('click', (e) => {
     const itemGallery = gallery.find(item => item.pk == pk)
     let itemPrice = parseInt(itemGallery.price)
     const shoopingCartCoincidence = user.cart.find(item => item.name == itemGallery.name)
+    let stockValue
     if(tagContent == 'Add to cart'){
         //todo spread new item
         stockForm.addEventListener('submit', (e) => {
             e.preventDefault()
-            let stockValue = stockForm.stock.value
+            stockValue = stockForm.stock.value
             stockValue = (stockValue) ? parseInt(stockValue) : 0
             stockValue = (stockValue < parseInt(itemGallery.stock)) ? stockValue : parseInt(itemGallery.stock)
             //? item exist this at user cart
