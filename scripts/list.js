@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', (e) => {
 })
 //todo pull item´s stock property from alert
 const stockForm = document.getElementById('stock-form')
+//todo modal
+const modalElement = document.getElementById('exampleModal')
+// const modal = bootstrap.Modal.getOrCreateInstance(modalElement)
 //* Save data button
 const galleryDataButton = document.getElementById('button-gallery')
 galleryDataButton.addEventListener('click', saveGalleryData)
@@ -38,12 +41,10 @@ row.addEventListener('click', (e) => {
     const itemGallery = gallery.find(item => item.pk == pk)
     let itemPrice = parseInt(itemGallery.price)
     const shoopingCartCoincidence = user.cart.find(item => item.name == itemGallery.name)
-    let stockValue
     if(tagContent == 'Add to cart'){
-        //todo spread new item
         stockForm.addEventListener('submit', (e) => {
             e.preventDefault()
-            stockValue = stockForm.stock.value
+            let stockValue = stockForm.stock.value
             stockValue = (stockValue) ? parseInt(stockValue) : 0
             stockValue = (stockValue < parseInt(itemGallery.stock)) ? stockValue : parseInt(itemGallery.stock)
             //? item exist this at user cart
@@ -53,7 +54,7 @@ row.addEventListener('click', (e) => {
                 stockContainer.textContent = `Stock cart - ${shoopingCartCoincidence.stock}`
             }
             else if(stockValue){
-                //todo Prepare user object to set local storage
+                //todo prepare user object to set local storage
                 const newItem = {...itemGallery}
                 newItem.pk = crypto.randomUUID()
                 newItem.stock = stockValue
@@ -75,6 +76,8 @@ row.addEventListener('click', (e) => {
             }
             updateUser(user)
             updateCurrentData(gallery)
+            const modal = bootstrap.Modal.getInstance(modalElement)
+            modal.hide()
             stockForm.reset()
         })
     }else{
