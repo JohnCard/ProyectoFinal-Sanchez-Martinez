@@ -1,0 +1,33 @@
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 1350px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.4s ease;
+    will-change: transform;
+}
+
+.carousel-track img {
+    flex: 0 0 auto;
+    width: 100%;
+    object-fit: cover;
+}
+
+.carousel-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0 10px;
+}
