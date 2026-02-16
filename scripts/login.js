@@ -1,5 +1,11 @@
 import { returnUserList } from "./helpers.js"
 
+const user = localStorage.getItem('user')
+//? an activated account?
+if(user){
+    // if user´s located redirect to user profile
+    window.location.href = '../pages/buy.html'
+}
 //todo login form
 const loginForm = document.querySelector('form')
 loginForm.addEventListener('submit', (e) => {
@@ -12,13 +18,8 @@ loginForm.addEventListener('submit', (e) => {
     if(user){
         user = JSON.stringify(user)
         localStorage.setItem('user', user)
-        Toastify({
-            text: 'User found',
-            duration: 3000,
-            gravity: 'bottom',
-            position: 'right',
-            backgroundColor: 'green',
-        }).showToast();
+        window.location.href = '../pages/buy.html'
+        
     }else{
         Toastify({
             text: 'Not found user!',

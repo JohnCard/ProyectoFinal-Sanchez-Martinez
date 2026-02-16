@@ -1,14 +1,13 @@
 import { Item } from "./models.js"
 
-//todo main gallery
+// main gallery
 let gallery = localStorage.getItem('gallery')
 gallery = JSON.parse(gallery)
-//* Additional functions
-//todo random integer
+// random integer return
 const randomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-//todo save default data
+// save default data
 const saveGalleryData = () => {
     fetch('product.json')
         .then(res => res.json())
@@ -23,47 +22,71 @@ const saveGalleryData = () => {
             localStorage.setItem('gallery', gallery)
         });
 }
-//todo update current data
+// update current data
 const updateCurrentData = (data) => {
     let saveData = [...data]
     saveData = JSON.stringify(saveData)
     localStorage.setItem('gallery', saveData)
 }
-//todo udd user
+// add user arrow function
 const addUser = (user) => {
+    // try to locate user array from local storage
     let userArray = localStorage.getItem('users')
+    //? localted user array?
     if(userArray){
+        // convert user array from string to array format
         userArray = JSON.parse(userArray)
+    //? not array found
     }else{
-        localStorage.setItem('users','[]')
-        userArray = localStorage.getItem('users')
-        userArray = JSON.parse(userArray)
+        // create yourself
+        userArray = []
     }
-    userArray.push(user)
-    userArray = JSON.stringify(userArray)
-    localStorage.setItem('users', userArray)
+    // try to locate some user whose email or name matches with current user parameter
+    let emailMatch = userArray.some(userInstance => userInstance.email == user.email)
+    let nameMatch = userArray.some(userInstance => userInstance.name == user.name)
+    //? some existent user with these credentials?
+    if(emailMatch || nameMatch){
+        // throw error modal
+        Swal.fire({
+            title: 'Existent account user!',
+            text: 'A user with these credentials is already registered',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+        })
+    }//? none user found using these credentials
+    else{
+        // add new user to users array
+        userArray.push(user)
+        // convert users array to string format and update users key at local storage
+        userArray = JSON.stringify(userArray)
+        localStorage.setItem('users', userArray)
+        const newUser = JSON.stringify(user)
+        localStorage.setItem('user', newUser)
+        window.location.href = '../pages/buy.html'
+    }
 }
-//todo user array
+// user array
 const returnUserList = () => {
     let userArray = localStorage.getItem('users')
     userArray = JSON.parse(userArray)
     return userArray
 }
-//todo get user
+// get user
 const returnUser = () => {
     let returnedUser = localStorage.getItem('user')
     returnedUser = JSON.parse(returnedUser)
     return returnedUser
 }
-//todo updated user
+// updated user
 const updateUser = (user) => {
     const newUser = JSON.stringify(user)
     localStorage.setItem('user', newUser)
 }
-//todo html card
-const cardItem = (item, stockCart=0) => {
+// html card
+const cardItem = (item, userType='user', stockCart=0) => {
     //! <p class="card-text min-h-50">Categories - ${item.categories.join(', ')}</p>
     //! <p class="card-text">${item.description.slice(0, 120)}...</p>
+    const classButton = (userType == 'manager') ? 'btn' : 'd-none'
     return `<div class="col-sm-6 col-lg-4 col-xxl-3 mb-3">
                 <div class="card">
                     <img src=${item.img} class="card-img-top py-3 px-5" alt="${item.slug}-image" height="180">
@@ -73,13 +96,15 @@ const cardItem = (item, stockCart=0) => {
                         <p class="card-text">Stock cart - ${stockCart}</p>
                         <p class="card-text">Stock gallery - ${item.stock}</p>
                         <p class="card-text min-h-50">Brand - ${item.brand}</p>
-                        <button class="btn btn-primary ${item.pk} me-3" data-bs-target="#exampleModal" data-bs-toggle="modal">Add to cart</button>
+                        <button class="btn btn-primary ${item.pk}" data-bs-target="#exampleModal" data-bs-toggle="modal">Add to cart</button>
                         <button class="btn btn-primary ${item.pk}">Add one item</button>
+                        <button class="${classButton} btn-success ${item.pk}">Add item</button>
+                        <button class="${classButton} btn-danger ${item.pk}">Remove item</button>
                     </div>
                 </div>
         </div>`
 }
-//todo accordion item html
+// accordion item html
 //! <p class="text-bg-light p-3 w-75">Categories - ${(item.categories).join(', ')}</p>
 const accordionItem = (item, state='') => {
     return `<div class="accordion-item">
@@ -104,7 +129,7 @@ const accordionItem = (item, state='') => {
         </div>
     </div>`
 }
-//todo accordion sub item html
+// accordion sub item html
 const accordionSubItem = (item, state='') => {
     return `<div class="accordion-item">
         <h2 class="accordion-header">
