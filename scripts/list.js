@@ -94,6 +94,11 @@ document.querySelector(".left").addEventListener("click", () => {
     moveCarousel();
 });
 
+setInterval(() => {
+    currentIndex++;
+    moveCarousel();
+}, 5000)
+
 
 // iterate each item of gallery list
 for(let item of gallery){
