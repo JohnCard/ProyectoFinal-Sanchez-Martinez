@@ -94,6 +94,7 @@ document.querySelector(".left").addEventListener("click", () => {
     moveCarousel();
 });
 
+// modify this event to translate initial gallery´s carousel at X axis every 5 seconds
 setInterval(() => {
     currentIndex++;
     moveCarousel();
