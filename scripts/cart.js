@@ -1,4 +1,4 @@
-import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery, returnUserList} from "./helpers.js"
+import { accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, updateCurrentData, gallery, returnUserList, tableItem, tableContent } from "./helpers.js"
 
 // user existence confirmation
 const userExistence = localStorage.getItem('user')
@@ -7,6 +7,8 @@ if(!userExistence){
     // if not user found, redirect to login
     window.location.href = '../pages/login.html'
 }
+// table body section
+const bodyTable = document.querySelector("tbody")
 // get accordion html containers (first & second)
 const accordion = document.getElementById('accordionFlushExample')
 const accordionTwo = document.getElementById('accordionFlushExample-2')
@@ -20,7 +22,6 @@ const logoutButton = document.getElementById('logout-button')
 const deleteAccountButton = document.getElementById('delete-account-button')
 // card text (extract every <p class="card-text"></p> tags) html elements
 const cardTextList = document.querySelectorAll('.card-text')
-
 // extract current userm shooping cart and collection items
 let user = returnUser()
 // total accumulated payment in the shooping cart (counter)
@@ -82,6 +83,8 @@ const resetContent = () => {
     // rewrite accordion shoopingCart/collection items
     accordionContent(user.shoopingCart, accordion, accordionItem)
     accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
+    // update table container based on new collection
+    tableContent(bodyTable, user.collectionItems, tableItem)
     // type user´s blanace
     cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
     // reset the value of the `total` variable to 0 and iterate through the shopping cart once again, adding up item´s price
@@ -104,6 +107,7 @@ const resetContent = () => {
 // write main data for accordion(s) html container based on user´s shooping cart and collection items
 accordionContent(user.shoopingCart, accordion, accordionItem)
 accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
+tableContent(bodyTable, user.collectionItems, tableItem)
 
 // remove actually user credentials (logout action activated) and update its at users list
 logoutButton.addEventListener('click', () => {
@@ -190,6 +194,8 @@ confirmButton.addEventListener('click', () => {
         updateUser(user)
         // update the last accordion container content based on new collection added items
         accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
+        // update table container based on new collection
+        tableContent(bodyTable, user.collectionItems, tableItem)
         // notificate current user the current window has been updated succesfully
         Swal.fire({
             title: '!Correctly tranfer!',

@@ -1,7 +1,5 @@
 import { saveGalleryData, cardItem, gallery, returnUser, updateUser, updateCurrentData } from "./helpers.js"
 
-// modal example element
-const modalElement = document.getElementById('exampleModal')
 // save data button and it´s event listener function
 const galleryDataButton = document.getElementById('button-gallery')
 galleryDataButton.addEventListener('click', saveGalleryData)
@@ -9,8 +7,6 @@ galleryDataButton.addEventListener('click', saveGalleryData)
 const row = document.querySelector('.row')
 // user variable for user´s shooping cart and collection items handling
 const user = returnUser()
-
-
 // get the track and viewport div containers
 const track = document.querySelector(".carousel-track");
 const viewport = document.querySelector(".carousel-viewport");
@@ -108,8 +104,6 @@ for(let item of gallery){
     // add cart item string templateto div.row container
     row.innerHTML += (findItem) ? cardItem(item, user.role, findItem.stock) : cardItem(item, user.role)
 }
-
-
 // gallery container´s logic handling
 row.addEventListener('click', (e) => {
     // call user variable once gain

@@ -116,7 +116,7 @@ const accordionItem = (item, state='') => {
         <div id="flush-collapse${item.pk}" class="accordion-collapse collapse ${state}" data-bs-parent="#accordionFlushExample">
             <div class="accordion-body bg-dark-subtle">
                 <p class="text-bg-light p-3">${item.description}</p>
-                <p class="text-bg-light p-3 w-75">Categories - ${(item.categories).join(', ')}</p>
+                <p class="text-bg-light p-3 w-75">Categories - ${item.categories.join(', ')}</p>
                 <p class="text-bg-light p-3 w-75">Brand - ${item.brand}</p>
                 <p class="text-bg-light p-3 w-50">Price - $${Number(item.price).toLocaleString('en-US')}</p>
                 <p class="text-bg-light p-3 w-25">Stock - ${item.stock}</p>
@@ -139,14 +139,36 @@ const accordionSubItem = (item, state='') => {
         <div id="flush-collapse${item.pk}" class="accordion-collapse collapse ${state}" data-bs-parent="#accordionFlushExample">
             <div class="accordion-body bg-dark-subtle">
                 <p class="text-bg-light p-3">${item.description}</p>
-                <p class="text-bg-light p-3 w-75">Categories - ${(item.categories).join(', ')}</p>
+                <p class="text-bg-light p-3 w-75">Categories - ${item.categories.join(', ')}</p>
                 <p class="text-bg-light p-3 w-75">Brand - ${item.brand}</p>
                 <p class="text-bg-light p-3 w-25">Stock - ${item.stock}</p>
             </div>
         </div>
     </div>`
 }
-//* wrtie an accordion main content
+// table item
+const tableItem = (item) => {
+    return `<tr>
+        <td>${item.name}</td>
+        <td>${item.stock}</td>
+        <td>${item.brand}</td>
+        <td>${item.categories.join(', ')}</td>
+        <td>${item.description.slice(0, 180)}...</td>
+    </tr>`
+}
+// create table content arrow function
+const tableContent = (container, listItems, htmlItem) => {
+    if(listItems.length > 0){
+        container.innerHTML = ''
+        listItems.forEach((item) => {
+            container.innerHTML += htmlItem(item)
+        })
+    }
+    else{
+        container.innerHTML = '<h2 class="text-warning">Empty collection.</h2>'
+    }
+}
+//* wrtie accordion main content
 const accordionContent = (listItems, accordionRef, htmlItem) => {
     if(listItems.length > 0){
         accordionRef.innerHTML = ''
@@ -164,4 +186,4 @@ const accordionContent = (listItems, accordionRef, htmlItem) => {
     }
 }
 
-export {saveGalleryData, cardItem, accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, addUser, returnUserList, randomInt, updateCurrentData, gallery}
+export { saveGalleryData, cardItem, accordionContent, accordionItem, accordionSubItem, returnUser, updateUser, addUser, returnUserList, randomInt, updateCurrentData, gallery, tableItem, tableContent }
