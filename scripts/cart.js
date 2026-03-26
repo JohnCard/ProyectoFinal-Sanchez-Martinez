@@ -14,7 +14,7 @@ const accordion = document.getElementById('accordionFlushExample')
 const accordionTwo = document.getElementById('accordionFlushExample-2')
 // confirm purchase button
 const confirmButton = document.getElementById('confirm-button')
-// empty shooping cart botton
+// empty shopping cart button
 const emptyCartButton = document.getElementById('empty-cart')
 // logout button
 const logoutButton = document.getElementById('logout-button')
