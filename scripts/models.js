@@ -1,8 +1,8 @@
 import { randomInt } from "./helpers.js"
 
 class User{
-    constructor(name, lastname, username, email, password, birthday, credit, role, adress, adress2, city, state, country){
-        //? current user´s age (additinoal operation)
+    constructor(name, lastName, username, email, password, birthday, credit, role, address, address2, city, state, country){
+        //? current user´s age (additional operation)
         const userAge = new Date().getFullYear() - new Date(birthday).getFullYear()
         //* User parameters
         this.id = crypto.randomUUID()
@@ -10,20 +10,20 @@ class User{
         this.lastLogin = null
         this.createdAt = new Date().toISOString().slice(0,10)
         this.updatedAt = new Date().toISOString().slice(0,10)
-        this.shoopingCart = []
+        this.shoppingCart = []
         this.collectionItems = []
         this.name = name
         this.birthday = birthday
         this.age = userAge
-        this.lastname = lastname
+        this.lastName = lastName
         this.username = username
         this.email = email
         this.password = password
         this.credit = credit
         this.role = role
         this.img = 'https://cdn-icons-png.flaticon.com/512/12538/12538444.png'
-        this.adress = adress
-        this.adress2 = adress2
+        this.address = address
+        this.address2 = address2
         this.city = city
         this.state = state
         this.country = country

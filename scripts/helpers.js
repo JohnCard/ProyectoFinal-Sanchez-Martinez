@@ -32,7 +32,7 @@ const updateCurrentData = (data) => {
 const addUser = (user) => {
     // try to locate user array from local storage
     let userArray = localStorage.getItem('users')
-    //? localted user array?
+    //? located user array?
     if(userArray){
         // convert user array from string to array format
         userArray = JSON.parse(userArray)
@@ -92,7 +92,7 @@ const cardItem = (item, userType='user', stockCart=0) => {
                     <div class="card-body">
                         <h5 class="card-title">${item.name}</h5>
                         <p class="card-text">Price - $${Number(item.price).toLocaleString('en-US')}</p>
-                        <p class="card-text">Stock shooping cart - ${stockCart}</p>
+                        <p class="card-text">Stock shopping cart - ${stockCart}</p>
                         <p class="card-text">Stock gallery - ${item.stock}</p>
                         <p class="card-text min-h-50">Categories - ${item.categories.join(', ')}</p>
                         <h6 class="card-title">Item description</h6>
@@ -168,7 +168,7 @@ const tableContent = (container, listItems, htmlItem) => {
         container.innerHTML = '<h2 class="text-warning">Empty collection.</h2>'
     }
 }
-//* wrtie accordion main content
+//* write accordion main content
 const accordionContent = (listItems, accordionRef, htmlItem) => {
     if(listItems.length > 0){
         accordionRef.innerHTML = ''

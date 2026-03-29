@@ -22,14 +22,14 @@ const logoutButton = document.getElementById('logout-button')
 const deleteAccountButton = document.getElementById('delete-account-button')
 // card text (extract every <p class="card-text"></p> tags) html elements
 const cardTextList = document.querySelectorAll('.card-text')
-// extract current userm shooping cart and collection items
+// extract current user shopping cart and collection items
 let user = returnUser()
-// total accumulated payment in the shooping cart (counter)
+// total accumulated payment in the shopping cart (counter)
 let total = 0
-user.shoopingCart.forEach(item => total += parseFloat(item.price))
-// total acumulated items in the shoopingCart (counter)
+user.shoppingCart.forEach(item => total += parseFloat(item.price))
+// total accumulated items in the shoppingCart (counter)
 let totalItems = 0
-user.shoopingCart.forEach(item => totalItems += item.stock)
+user.shoppingCart.forEach(item => totalItems += item.stock)
 // total bought items (counter)
 let collectionTotal = 0
 user.collectionItems.forEach(item => collectionTotal += item.stock)
@@ -80,21 +80,21 @@ const resetContent = () => {
     // update localStorage´s user and gallery keys
     updateUser(user)
     updateCurrentData(gallery)
-    // rewrite accordion shoopingCart/collection items
-    accordionContent(user.shoopingCart, accordion, accordionItem)
+    // rewrite accordion shoppingCart/collection items
+    accordionContent(user.shoppingCart, accordion, accordionItem)
     accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
     // update table container based on new collection
     tableContent(bodyTable, user.collectionItems, tableItem)
-    // type user´s blanace
+    // type user´s balance
     cardTextFifth.textContent = `User´s balance - $ ${(user.credit).toLocaleString('es-US')}`
     // reset the value of the `total` variable to 0 and iterate through the shopping cart once again, adding up item´s price
     total = 0
-    user.shoopingCart.forEach(item => total += parseFloat(item.price))
+    user.shoppingCart.forEach(item => total += parseFloat(item.price))
     // update the payment cost display with the current total, formatting the number with commas for thousands (en-US style)
     paymentCost.textContent = `Payment cost - $${total.toLocaleString('en-US')}`
     // reset totalItems variable to 0 and iterate through the shopping cart once again, adding up item´s stock
     totalItems = 0
-    user.shoopingCart.forEach(item => totalItems += item.stock)
+    user.shoppingCart.forEach(item => totalItems += item.stock)
     // update selected items tag display with totalItems value
     selectedItems.textContent = `Total selected items - ${totalItems}`
     // consider the possibility that before the current item was removed, the user's credit might not have been enough to cover all the items. Since an item was just removed, re-evaluate whether the user's credit is now greater than the total cost of all items.
@@ -104,8 +104,8 @@ const resetContent = () => {
         enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
     }
 }
-// write main data for accordion(s) html container based on user´s shooping cart and collection items
-accordionContent(user.shoopingCart, accordion, accordionItem)
+// write main data for accordion(s) html container based on user´s shopping cart and collection items
+accordionContent(user.shoppingCart, accordion, accordionItem)
 accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
 tableContent(bodyTable, user.collectionItems, tableItem)
 
@@ -115,10 +115,10 @@ logoutButton.addEventListener('click', () => {
     let userArray = [...returnUserList()]
     // filter user whose name matches with currently logged-in user
     let filterUser = userArray.find(userInstance => userInstance.name == user.name)
-    // assign the new credit value, collection and shooping cart of the currently logged-in user to the user in the users list that we filtered by its name
+    // assign the new credit value, collection and shopping cart of the currently logged-in user to the user in the users list that we filtered by its name
     filterUser.credit = user.credit
     filterUser.collectionItems = user.collectionItems
-    filterUser.shoopingCart = user.shoopingCart
+    filterUser.shoppingCart = user.shoppingCart
     // convert user array to string format to save at local storage
     userArray = JSON.stringify(userArray)
     // set new users array to local storage
@@ -145,11 +145,11 @@ deleteAccountButton.addEventListener('click', () => {
 })
 // purchase everything in the shopping cart, provided that the user has sufficient credit.
 confirmButton.addEventListener('click', () => {
-    // extract user, user´s shooping cart & user´s collected items variables
+    // extract user, user´s shopping cart & user´s collected items variables
     user = returnUser()
-    // reiterate user´s shooping cart to increase total´s value from 0 to las article´s price to consider whether the user´s is able to perform this action
+    // reiterate user´s shopping cart to increase total´s value from 0 to las article´s price to consider whether the user´s is able to perform this action
     total = 0
-    user.shoopingCart.forEach(item => total += parseFloat(item.price))
+    user.shoppingCart.forEach(item => total += parseFloat(item.price))
     //? not possible purchase?
     if(user.credit < total){
         // an alert will be shown to the user indicating that the total purchase cannot be completed because user do not have enough balance.
@@ -159,27 +159,27 @@ confirmButton.addEventListener('click', () => {
             icon: 'error',
             confirmButtonText: 'Ok',
         })
-    }//? is the user´s credit enought to purchase shooping cart?
+    }//? is the user´s credit enough to purchase shopping cart?
     else{
-        // iterate each shooping cart item
-        user.shoopingCart.forEach(cartItem => {
-            // user´s balance is reduced by item´s price
+        // iterate each shopping cart item
+        user.shoppingCart.forEach(cartItem => {
+            // user's balance is reduced by item's price
             user.credit -= cartItem.price
-            //? some coincidence into user´s collection for current item?
+            //? some coincidence into user's collection for current item?
             const someItem = user.collectionItems.find(item => item.name == cartItem.name)
-            //? if does, you will iterate over user´s collection items and increase current item´s stock from shooping cart item´s stock value and the user's balance is reduced by the price of the same item in the cart
+            //? if does, you will iterate over user's collection items and increase current item´s stock from shopping cart item´s stock value and the user's balance is reduced by the price of the same item in the cart
             if(someItem){
                 someItem.stock += cartItem.stock
-            }// if you didn´t find any item from user´s collection, it means you have to add a new item for
+            }// if you didn't find any item from user's collection, it means you have to add a new item for
             else{
-                // remove item´s price, because it dosen´t need this one now you´ve gotten this product recently
+                // remove item's price, because it doesn't need this one now you've gotten this product recently
                 delete cartItem.price
                 // update user´s collection adding the new item to the end of this list
                 user.collectionItems.push(cartItem)
             }
         })
-        // now you have gotten complete shooping cart, it´s time to assign your shooping cart an empty value
-        user.shoopingCart = []
+        // now you have gotten complete shopping cart, it´s time to assign your shopping cart an empty value
+        user.shoppingCart = []
         // reset the content of these elements to their initial values, as if you were about to start a new shopping session from scratch.
         paymentCost.textContent = `Payment cost - $0`
         selectedItems.textContent = `Total selected items - 0`
@@ -188,7 +188,7 @@ confirmButton.addEventListener('click', () => {
         // total user´s collection items
         collectionTotal = 0
         user.collectionItems.forEach(item => collectionTotal += item.stock)
-        // update gottendItems tag display value
+        // update gottenItems tag display value
         gottenItems.textContent = `Your items - ${collectionTotal}`
         // update user´s collection & user
         updateUser(user)
@@ -196,16 +196,16 @@ confirmButton.addEventListener('click', () => {
         accordionContent(user.collectionItems, accordionTwo, accordionSubItem)
         // update table container based on new collection
         tableContent(bodyTable, user.collectionItems, tableItem)
-        // notificate current user the current window has been updated succesfully
+        // notify current user the current window has been updated successfully
         Swal.fire({
-            title: '!Correctly tranfer!',
+            title: '!Successful transfer!',
             text: 'Your items will arrive soon!',
             icon: 'success',
             confirmButtonText: 'Ok',
         })
     }
 })
-// empty shoopoing cart
+// empty shopping cart
 emptyCartButton.addEventListener('click', () => {
     // extract main user variable
     user = returnUser()
@@ -214,7 +214,7 @@ emptyCartButton.addEventListener('click', () => {
     selectedItems.textContent = `Total selected items - 0`
     accordion.innerHTML = '<h2 class="text-warning">Not selected items yet.</h2>'
     // 
-    user.shoopingCart.forEach(cartItem => {
+    user.shoppingCart.forEach(cartItem => {
         // look for a match in the gallery array to see if there is any item with the same name as the current one.
         const coincidence = gallery.find(galleryItem => galleryItem.name == cartItem.name)
         //? some coincidence?, we have to iterate gallery array to locate same item and increase it´s stock value based on current cart item´s stock value
@@ -223,7 +223,7 @@ emptyCartButton.addEventListener('click', () => {
         }else{
             // item price
             let initPrice = cartItem.price
-            // extract stock value from shooping cart item
+            // extract stock value from shopping cart item
             const stock = cartItem.stock
             // divide its price by the number of times it was repeated
             initPrice = (initPrice/stock)
@@ -233,15 +233,15 @@ emptyCartButton.addEventListener('click', () => {
             gallery.push(cartItem)
         }
     })
-    // succesfully update to gallery
+    // successfully update to gallery
     updateCurrentData(gallery)
-    // reset user´s shooping cart and total variable to empty state
-    user.shoopingCart = []
+    // reset user´s shopping cart and total variable to empty state
+    user.shoppingCart = []
     total = 0
     // update to new user to local storage to keep permanent it´s change
     updateUser(user)
     enoughCredit.innerHTML = '<p class="card-text fs-5 text-success">Enough credit</p>'
-    // throw succesfully notification for current user
+    // throw successfully notification for current user
     Swal.fire({
         title: 'Empty cart',
         icon: 'info',
@@ -257,30 +257,30 @@ accordion.addEventListener('click', (e) => {
     // get the third class name of the clicked element (index 2)
     const pk = e.target.classList[2]
     // find the first item in the user's shopping cart whose primary key matches the item's primary key
-    const cartItem = user.shoopingCart.find(item => item.pk == pk)
+    const cartItem = user.shoppingCart.find(item => item.pk == pk)
     // divide the item’s price by its stock value (number of repetitions) to get its unit price or original value
     let itemPrice = (parseInt(cartItem.price)/parseInt(cartItem.stock))
     // assign current item´s stock value to stockItem variable
     let stockItem = cartItem.stock
-    // try to find a match in the gallery array for an item whose name matches the current shooping cart item´s name
+    // try to find a match in the gallery array for an item whose name matches the current shopping cart item´s name
     const coincidence = gallery.find(item => item.name == cartItem.name)
-    // youu wil perform the same action for user´s collection items
+    // you wil perform the same action for user´s collection items
     const collectionCoincidence = user.collectionItems.find(item => item.name == cartItem.name)
     //? is the user trying to buy all items with an specific primary key?
     if(targetValue == 'Buy item(s)'){
-        //? is the user´s available credit greater than or equal to the shooping cart´s item price?
+        //? is the user´s available credit greater than or equal to the shopping cart´s item price?
         if(user.credit >= cartItem.price){
-            // substract the shooping cart´s item price from user´s credit
+            // subtract the shopping cart´s item price from user´s credit
             user.credit -= cartItem.price
-            // re-assign user´s shooping cart ignoring any item whose primary key matches to current item´s primary key
-            user.shoopingCart = user.shoopingCart.filter(item => item.pk != pk)
+            // re-assign user´s shopping cart ignoring any item whose primary key matches to current item´s primary key
+            user.shoppingCart = user.shoppingCart.filter(item => item.pk != pk)
             //? is there a match in the user's collection for the current item with the same name?
             if(collectionCoincidence){
                 // just add cart item´s stock value to the match´s stock
                 collectionCoincidence.stock += cartItem.stock
             }//? no match?
             else{
-                // we dont´t already need its price because we just bought this item, so delete this property
+                // we don't already need its price because we just bought this item, so delete this property
                 delete cartItem.price
                 // add this item as a new one for user´s collection
                 user.collectionItems.push(cartItem)
@@ -296,33 +296,33 @@ accordion.addEventListener('click', (e) => {
         }
     }//? is the user trying to buy only one unit?
     else if(targetValue == 'Buy item'){
-        //? is the user´s available credit greater than or equal to the shooping cart´s item price?
+        //? is the user´s available credit greater than or equal to the shopping cart´s item price?
         if(user.credit >= itemPrice){
-            // substract item´s unit price to user´s credit
+            // subtract item´s unit price to user´s credit
             user.credit -= itemPrice
             //? some collection´s match?
             if(collectionCoincidence){
-                // add one to collection´s item stock value whose name matched to shooping cart´s item name
+                // add one to collection´s item stock value whose name matched to shopping cart´s item name
                 collectionCoincidence.stock += 1
             } //? nothing match
             else{
                 // extract one copy from cart item to avoid affect it to continue modifying it after perform the current action using applying spread method 
                 const newItem = {...cartItem}
-                // we dont´t already need its price because we just bought this item, so delete this property
+                // we don´t already need its price because we just bought this item, so delete this property
                 delete newItem.price
                 // assign new item´s stock value to one unit
                 newItem.stock = 1
                 // add new item to user´s collection items
                 user.collectionItems.push(newItem)
             }
-            // substract one unit to current shooping cart´s item
+            // subtract one unit to current shopping cart´s item
             cartItem.stock -= 1
-            // substract unit price value to current shooping cart´s item
+            // subtract unit price value to current shopping cart´s item
             cartItem.price -= itemPrice
             //? is it cart´s item stock value equal to 0 (it does not have more existences through gallery items)?
             if(cartItem.stock == 0){
-                // filter new shooping cart ignoring any item whose primary key matches with current item´s primary key to avoid include it in hte new shooping cart
-                user.shoopingCart = user.shoopingCart.filter(item => item.pk != pk)
+                // filter new shopping cart ignoring any item whose primary key matches with current item´s primary key to avoid include it in hte new shopping cart
+                user.shoppingCart = user.shoppingCart.filter(item => item.pk != pk)
             }
             resetContent()
         }// throw alert notification to user indicating there´s not enough credit to perform current action
@@ -354,7 +354,7 @@ accordion.addEventListener('click', (e) => {
         }
         //? we consider that if there is only one of these items left in the shopping cart and it is going to be removed, in that case we filter all the items in the cart again except for the one whose “primary key” matches that of the removed item
         if(stockItem == 1){
-            user.shoopingCart = user.shoopingCart.filter(item => item.pk !== pk)
+            user.shoppingCart = user.shoppingCart.filter(item => item.pk !== pk)
         }//? but if it is not yet the only item of its type, then we readjust its current price and subtract one repetition from its stock value
         else{
             cartItem.price -= itemPrice
@@ -374,8 +374,8 @@ accordion.addEventListener('click', (e) => {
             // add current item as a new one product to the market´s gallery
             gallery.push(cartItem)
         }
-        // remove current item from shooping cart
-        user.shoopingCart = user.shoopingCart.filter(item => item.pk != pk)
+        // remove current item from shopping cart
+        user.shoppingCart = user.shoppingCart.filter(item => item.pk != pk)
         resetContent()
     }
 })

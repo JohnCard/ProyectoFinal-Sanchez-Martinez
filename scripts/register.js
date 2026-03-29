@@ -20,8 +20,8 @@ form.addEventListener('submit', (e) => {
     const password = form.password.value
     const passwordConfirmation = form.passwordConfirm.value
     const email = form.email.value
-    const adress = form.adress.value
-    const adress2 = form.adress2.value
+    const address = form.address.value
+    const address2 = form.address2.value
     const birthday = form.birthday.value
     let credit = form.credit.value
     credit = parseFloat(credit)
@@ -30,15 +30,15 @@ form.addEventListener('submit', (e) => {
     const state = form.state.value
     const country = form.country.value
     //* create new user instance based on payload data
-    const user = new User(name, lastName, username, email, password, birthday, credit, role, adress, adress2, city, state, country)
+    const user = new User(name, lastName, username, email, password, birthday, credit, role, address, address2, city, state, country)
     //? is the password field equal to password confirmation
     if(password == passwordConfirmation){
         addUser(user)
-    }//? initial password and its confirmation dosen´t match?
+    }//? initial password and its confirmation does not match?
     else{
         Swal.fire({
             title: 'Password field error!',
-            text: 'Original password and its confirmation dosen´t match',
+            text: 'Original password and its confirmation does not match',
             icon: 'error',
             confirmButtonText: 'Ok',
         })

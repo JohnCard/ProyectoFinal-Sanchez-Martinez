@@ -5,7 +5,7 @@ const galleryDataButton = document.getElementById('button-gallery')
 galleryDataButton.addEventListener('click', saveGalleryData)
 // .row div element (gallery´s container)
 const row = document.querySelector('.row')
-// user variable for user´s shooping cart and collection items handling
+// user variable for user´s shopping cart and collection items handling
 const user = returnUser()
 // get the track and viewport div containers
 const track = document.querySelector(".carousel-track");
@@ -99,9 +99,9 @@ setInterval(() => {
 
 // iterate each item of gallery list
 for(let item of gallery){
-    // try to find a coinciedence in shooping cart with a item whose name matches with current gallery´s item
-    const findItem = (user) ? user.shoopingCart.find(itemCart => itemCart.name == item.name) : undefined
-    // add cart item string templateto div.row container
+    // try to find a coincidence in shopping cart with a item whose name matches with current gallery´s item
+    const findItem = (user) ? user.shoppingCart.find(itemCart => itemCart.name == item.name) : undefined
+    // add cart item string template div.row container
     row.innerHTML += (findItem) ? cardItem(item, user.role, findItem.stock) : cardItem(item, user.role)
 }
 // gallery container´s logic handling
@@ -123,17 +123,17 @@ row.addEventListener('click', (e) => {
     // pull item´s price value
     let itemPrice = parseInt(itemGallery.price)
     // find a shooing cart item whose name matches the current gallery item's name
-    const shoopingCartCoincidence = user.shoopingCart.find(item => item.name == itemGallery.name)
+    const shoppingCartCoincidence = user.shoppingCart.find(item => item.name == itemGallery.name)
     if(tagContent == 'Add one item'){
         //? any match? then we just need to modify the item in the user´s shopping cart
-        if(shoopingCartCoincidence){
+        if(shoppingCartCoincidence){
             // add one to the item’s stock value
-            shoopingCartCoincidence.stock += 1
+            shoppingCartCoincidence.stock += 1
             // update the unit price to indicate that we’ve added the same item again
-            shoopingCartCoincidence.price += itemPrice
+            shoppingCartCoincidence.price += itemPrice
             // update stock html container value
-            stockContainer.textContent = `Stock shooping cart - ${shoopingCartCoincidence.stock}`
-        }//? no match?, edit new item from scratch to add to shooping cart as new product
+            stockContainer.textContent = `Stock shopping cart - ${shoppingCartCoincidence.stock}`
+        }//? no match?, edit new item from scratch to add to shopping cart as new product
         else{
             // extract copy from current gallery´s item to avoid modify the itemGallery instance
             const newItem = {...itemGallery}
@@ -141,12 +141,12 @@ row.addEventListener('click', (e) => {
             newItem.pk = crypto.randomUUID()
             // initialize its stock value to 1.
             newItem.stock = 1
-            // assing its price value to unit price or original value
+            // assign its price value to unit price or original value
             newItem.price = itemPrice
-            // add it to shooping cart
-            user.shoopingCart.push(newItem)
-            // update stock container value for item´s state in shooping cart
-            stockContainer.textContent = `Stock shooping cart - ${newItem.stock}`
+            // add it to shopping cart
+            user.shoppingCart.push(newItem)
+            // update stock container value for item´s state in shopping cart
+            stockContainer.textContent = `Stock shopping cart - ${newItem.stock}`
         }
         // subtract one from the original item's stock value
         itemGallery.stock -= 1
@@ -160,12 +160,12 @@ row.addEventListener('click', (e) => {
             row.innerHTML = ''
             // iterate through each gallery´s item
             gallery.forEach(galleryItem => {
-                // look for a match in the shooping cart for current gallery´s item
-                const shoopingCartItem = user.shoopingCart.find(item => item.name == galleryItem.name)
+                // look for a match in the shopping cart for current gallery´s item
+                const shoppingCartItem = user.shoppingCart.find(item => item.name == galleryItem.name)
                 // add an additional string template to the row HTML container.
                 // if a match is found in the shopping cart for the current item, we pass the item's stock value as a parameter.
                 // if no match exists, we just pass the current galleryItem as a parameter to the cardItem function to add the HTML string template.
-                row.innerHTML += (shoopingCartItem) ? cardItem(galleryItem, user.role, shoopingCartItem.stock) : cardItem(galleryItem)
+                row.innerHTML += (shoppingCartItem) ? cardItem(galleryItem, user.role, shoppingCartItem.stock) : cardItem(galleryItem)
             })
         }//? current item is still existent at gallery?
         else{
@@ -191,12 +191,12 @@ row.addEventListener('click', (e) => {
             row.innerHTML = ''
             // iterate through each gallery´s item
             gallery.forEach(galleryItem => {
-                // look for a match in the shooping cart for current gallery´s item
-                const shoopingCartItem = user.shoopingCart.find(item => item.name == galleryItem.name)
+                // look for a match in the shopping cart for current gallery´s item
+                const shoppingCartItem = user.shoppingCart.find(item => item.name == galleryItem.name)
                 // add an additional string template to the row HTML container.
                 // if a match is found in the shopping cart for the current item, we pass the item's stock value as a parameter.
                 // if no match exists, we just pass the current galleryItem as a parameter to the cardItem function to add the HTML string template.
-                row.innerHTML += (shoopingCartItem) ? cardItem(galleryItem, user.role, shoopingCartItem.stock) : cardItem(galleryItem)
+                row.innerHTML += (shoppingCartItem) ? cardItem(galleryItem, user.role, shoppingCartItem.stock) : cardItem(galleryItem)
             })
         }//? current item is still existent at gallery?
         else{
