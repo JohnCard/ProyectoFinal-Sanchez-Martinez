@@ -104,7 +104,7 @@ npx serve .
 
 | Landing Page | Product Gallery | Shopping Cart | User Dashboard |
 |:-:|:-:|:-:|:-:|
-| ![Home](https://res.cloudinary.com/de1slf4r1/image/upload/v1774649580/Captura_de_pantalla_2026-03-27_a_la_s_4.12.46_p.m._e9dzya.png) | ![Gallery](https://res.cloudinary.com/de1slf4r1/image/upload/v1774649515/Captura_de_pantalla_2026-03-27_a_la_s_4.06.45_p.m._p25nau.png) | ![Cart](https://res.cloudinary.com/de1slf4r1/image/upload/v1774649448/Captura_de_pantalla_2026-03-27_a_la_s_4.08.30_p.m._oy5byt.png) | ![Dashboard](https://res.cloudinary.com/de1slf4r1/image/upload/v1774649433/Captura_de_pantalla_2026-03-27_a_la_s_4.08.22_p.m._rmebcp.png) |
+| ![Home](img/Landing_page.png) | ![Gallery](img/Gallery.png) | ![Cart](img/shopping_cart.png) | ![Dashboard](img/dashboard.png) |
 
 ---
 
